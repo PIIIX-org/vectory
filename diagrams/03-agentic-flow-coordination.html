@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic Flow &amp; Coordination</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1080px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 720px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · Design Tool System</p>
+    <h1>Agentic Flow &amp; Coordination</h1>
+
+    <svg viewBox="0 0 760 760" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+      </defs>
+
+      <!-- Background: clean paper, no dot pattern (minimal light) -->
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- Spawn-cluster group frames (background layer) -->
+      <rect x="40" y="320" width="360" height="112" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.25)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="56" y="340" fill="#4f5d75" font-size="7.5" font-family="'Geist Mono', monospace" letter-spacing="0.14em">SEQUENTIAL SPAWN</text>
+
+      <rect x="440" y="320" width="232" height="112" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.25)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="456" y="340" fill="#4f5d75" font-size="7.5" font-family="'Geist Mono', monospace" letter-spacing="0.14em">PARALLEL SPAWN</text>
+
+      <!-- ===================== ARROWS (behind boxes) ===================== -->
+
+      <!-- Trigger -> Router -->
+      <line x1="480" y1="120" x2="480" y2="156" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Router -> sequential branch entry (Canvas Agent) -->
+      <line x1="364" y1="220" x2="116" y2="352" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- Router -> parallel branch entries (Code Gen + Preview, simultaneous) -->
+      <line x1="596" y1="220" x2="504" y2="352" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="600" y1="216" x2="608" y2="352" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Sequential chain: Canvas -> Code Gen -> Validation -->
+      <line x1="156" y1="384" x2="172" y2="384" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="264" y1="384" x2="280" y2="384" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Chain / spawn outputs -> Message Bus -->
+      <line x1="328" y1="412" x2="416" y2="556" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="500" y1="412" x2="480" y2="556" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="608" y1="412" x2="540" y2="556" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Arrow labels (masked) -->
+      <rect x="198" y="276" width="76" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="236" y="285" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">SEQUENTIAL</text>
+
+      <rect x="544" y="240" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="576" y="249" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">PARALLEL</text>
+
+      <rect x="452" y="480" width="56" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="480" y="489" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.10em">PUB/SUB</text>
+
+      <!-- ===================== PAPER MASKS for transparent-fill nodes ===================== -->
+      <rect x="360" y="40" width="240" height="80" rx="40" fill="#f5f5f5"/>
+      <polygon points="480,160 600,208 480,256 360,208" fill="#f5f5f5"/>
+      <rect x="360" y="560" width="240" height="72" rx="8" fill="#f5f5f5"/>
+
+      <!-- ===================== NODES ===================== -->
+
+      <!-- Trigger Event (oval — start, input treatment) -->
+      <rect x="360" y="40" width="240" height="80" rx="40" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+      <text x="480" y="68" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Trigger Event</text>
+      <text x="480" y="84" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">element added · annotation added</text>
+      <text x="480" y="96" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">layout updated · token modified</text>
+
+      <!-- Agent Router (diamond — decision, focal) -->
+      <polygon points="480,160 600,208 480,256 360,208" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"/>
+      <text x="480" y="204" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Agent Router</text>
+      <text x="480" y="220" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">decides which agents to spawn</text>
+
+      <!-- Sequential chain chips -->
+      <rect x="68" y="356" width="88" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="112" y="384" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Canvas</text>
+      <text x="112" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">dom · layout</text>
+
+      <rect x="176" y="356" width="88" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="220" y="384" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Code Gen</text>
+      <text x="220" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">claude api</text>
+
+      <rect x="284" y="356" width="88" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="328" y="384" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Validation</text>
+      <text x="328" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">lint · a11y</text>
+
+      <!-- Parallel spawn chips -->
+      <rect x="456" y="356" width="88" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="500" y="384" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Code Gen</text>
+      <text x="500" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">claude api</text>
+
+      <rect x="564" y="356" width="88" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="608" y="384" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Preview</text>
+      <text x="608" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">live render</text>
+
+      <!-- Message Bus (store / shared state) -->
+      <rect x="360" y="560" width="240" height="72" rx="8" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+      <text x="480" y="592" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Message Bus</text>
+      <text x="480" y="608" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">redis · event stream</text>
+
+      <!-- ===================== LEGEND ===================== -->
+      <line x1="40" y1="676" x2="720" y2="676" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="40" y="692" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+      <polygon points="46,714 58,708 70,714 58,720" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1.2"/>
+      <text x="78" y="717" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Agent Router (focal)</text>
+
+      <rect x="220" y="708" width="24" height="12" rx="6" fill="rgba(79,93,117,0.10)" stroke="#7a8399" stroke-width="1"/>
+      <text x="252" y="717" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Trigger event</text>
+
+      <rect x="364" y="708" width="24" height="12" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="396" y="717" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Spawned agent</text>
+
+      <rect x="508" y="708" width="24" height="12" rx="4" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="1"/>
+      <text x="540" y="717" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Message Bus</text>
+
+      <rect x="628" y="708" width="24" height="12" rx="4" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.25)" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="660" y="717" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Spawn cluster</text>
+    </svg>
+  </div>
+</body>
+</html>

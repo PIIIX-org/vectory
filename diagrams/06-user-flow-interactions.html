@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designer User Flow &amp; Interactions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+
+    .frame { max-width: 1200px; width: 100%; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+
+    svg { width: 100%; min-width: 900px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · Design Tool System</p>
+    <h1>Designer User Flow &amp; Interactions</h1>
+
+    <svg viewBox="0 0 1000 540" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+        <!-- ============ ARROWS (drawn before boxes) ============ -->
+
+        <!-- Main flow chain — coral, the primary/focal accent path -->
+        <line x1="204" y1="96" x2="232" y2="96" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <line x1="392" y1="96" x2="420" y2="96" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <line x1="580" y1="96" x2="608" y2="96" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <line x1="768" y1="96" x2="796" y2="96" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+
+        <!-- Step → panel connections -->
+        <line x1="312" y1="128" x2="312" y2="192" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <line x1="876" y1="128" x2="876" y2="192" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+        <!-- Annotation & refinement loop — dashed return path, Code Editor back to Preview -->
+        <path d="M 816 352 C 816 416, 184 416, 184 352" fill="none" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+
+        <!-- ============ MAIN FLOW STEPS ============ -->
+
+        <!-- Step 1: Create Project -->
+        <rect x="44" y="64" width="160" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="124" y="92" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Create Project</text>
+        <text x="124" y="108" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">new file · template</text>
+
+        <!-- Step 2: Design on Canvas -->
+        <rect x="232" y="64" width="160" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="312" y="92" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Design on Canvas</text>
+        <text x="312" y="108" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">drag &amp; drop components</text>
+
+        <!-- Step 3: Add Tokens -->
+        <rect x="420" y="64" width="160" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="500" y="92" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Add Tokens</text>
+        <text x="500" y="108" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">color · type · spacing</text>
+
+        <!-- Step 4: Set Breakpoints -->
+        <rect x="608" y="64" width="160" height="64" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="688" y="92" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Set Breakpoints</text>
+        <text x="688" y="108" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">sm · md · lg · xl</text>
+
+        <!-- Step 5: Generate Code (focal — coral) -->
+        <rect x="796" y="64" width="160" height="64" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+        <text x="876" y="92" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Generate Code</text>
+        <text x="876" y="108" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">claude api → html/css</text>
+
+        <!-- ============ PREVIEW PANEL (left region) ============ -->
+        <rect x="44" y="192" width="280" height="160" rx="8" fill="rgba(45,49,66,0.02)" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+        <rect x="60" y="184" width="136" height="16" fill="#f5f5f5"/>
+        <text x="68" y="196" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">PREVIEW PANEL</text>
+
+        <text x="184" y="228" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Live Website Preview</text>
+        <text x="64" y="252" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• live view updates as you design</text>
+        <text x="64" y="268" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• toggle between breakpoints</text>
+        <text x="64" y="284" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• responsive testing, no code</text>
+
+        <!-- ============ CODE EDITOR PANEL (right region, dashed/optional) ============ -->
+        <rect x="676" y="192" width="280" height="160" rx="8" fill="rgba(45,49,66,0.02)" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+        <rect x="692" y="184" width="168" height="16" fill="#f5f5f5"/>
+        <text x="700" y="196" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">CODE EDITOR PANEL</text>
+
+        <text x="816" y="228" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Generated HTML + CSS</text>
+        <text x="696" y="252" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• syntax-highlighted code</text>
+        <text x="696" y="268" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• see design → code mapping</text>
+        <text x="696" y="284" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace">• copy or export the snippet</text>
+
+        <!-- Loop label -->
+        <rect x="444" y="408" width="112" height="16" fill="#f5f5f5"/>
+        <text x="500" y="420" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">ANNOTATE &amp; REFINE</text>
+
+        <!-- Editorial caption -->
+        <text x="500" y="448" fill="#2d3142" font-size="14" font-style="italic" font-family="'Instrument Serif', serif" text-anchor="middle">iterate until it feels right, then publish</text>
+
+        <!-- ============ LEGEND ============ -->
+        <line x1="44" y1="476" x2="956" y2="476" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+        <text x="44" y="492" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+        <rect x="44" y="504" width="24" height="12" rx="4" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+        <text x="76" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Flow step</text>
+
+        <rect x="200" y="504" width="24" height="12" rx="4" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+        <text x="232" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Focal endpoint</text>
+
+        <rect x="356" y="504" width="24" height="12" rx="4" fill="rgba(45,49,66,0.02)" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="388" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Grouped panel</text>
+
+        <line x1="512" y1="510" x2="540" y2="510" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+        <text x="548" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Primary flow</text>
+
+        <line x1="672" y1="510" x2="700" y2="510" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <text x="708" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Panel link</text>
+
+        <line x1="820" y1="510" x2="848" y2="510" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+        <text x="856" y="514" fill="#4f5d75" font-size="8.5" font-family="'Geist', sans-serif">Refine loop</text>
+      </svg>
+  </div>
+</body>
+</html>

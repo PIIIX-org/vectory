@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Model &amp; Database Schema · Design Tool Architecture</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-paper-2: #ececec;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-soft:    #7a8399;
+      --color-accent:  #eb6c36;
+      --color-link:    #2e5aa8;
+      --font-sans:  'Geist', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', serif;
+      --font-mono:  'Geist Mono', ui-monospace, monospace;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      padding: 3rem 2rem 2.5rem;
+    }
+
+    .frame { max-width: 1280px; width: 100%; margin: 0 auto; }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.2vw + 0.75rem, 1.75rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.75rem;
+    }
+
+    svg { width: 100%; min-width: 1100px; display: block; }
+
+    .summary {
+      margin-top: 1.75rem;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid rgba(45,49,66,0.12);
+      border-radius: 6px;
+      padding: 1.25rem 1.5rem;
+      max-width: 720px;
+    }
+
+    .card .eyebrow { margin-bottom: 0.75rem; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .card-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-muted);
+      flex-shrink: 0;
+    }
+
+    .card-header h3 {
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-ink);
+    }
+
+    .cache-row {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.9rem;
+    }
+
+    .cache-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .cache-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-top: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    .cache-dot.link { background: var(--color-link); }
+    .cache-dot.ink  { background: var(--color-ink); }
+
+    .cache-item p {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--color-muted);
+      line-height: 1.5;
+    }
+
+    .cache-item p strong {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-ink);
+      margin-bottom: 0.15rem;
+    }
+
+    .cache-note {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--color-ink);
+      padding-top: 0.75rem;
+      border-top: 1px solid rgba(45,49,66,0.10);
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(45,49,66,0.10);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--color-soft);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Architecture · Design Tool System</p>
+    <h1>Data Model &amp; Database Schema</h1>
+
+    <svg viewBox="0 0 1320 816" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- ===================== RELATIONSHIP LINES (drawn before boxes) ===================== -->
+      <!-- A. Users -> Projects (1:N) -->
+      <line x1="280" y1="160" x2="560" y2="340" stroke="#4f5d75" stroke-width="1"/>
+      <!-- B. Canvas State -> Projects (1:1) -->
+      <line x1="680" y1="176" x2="680" y2="320" stroke="#4f5d75" stroke-width="1"/>
+      <!-- C. Design Tokens -> Projects (1:N) -->
+      <line x1="1040" y1="180" x2="800" y2="340" stroke="#4f5d75" stroke-width="1"/>
+      <!-- D. Breakpoints -> Projects (1:N) -->
+      <line x1="280" y1="388" x2="560" y2="388" stroke="#4f5d75" stroke-width="1"/>
+      <!-- E. Projects -> Versions (1:N) -->
+      <line x1="800" y1="388" x2="1040" y2="388" stroke="#4f5d75" stroke-width="1"/>
+      <!-- F. Annotations -> Projects (1:N) -->
+      <line x1="280" y1="580" x2="600" y2="456" stroke="#4f5d75" stroke-width="1"/>
+      <!-- G. Generated Code -> Projects (1:N) -->
+      <line x1="1040" y1="580" x2="760" y2="456" stroke="#4f5d75" stroke-width="1"/>
+
+      <!-- ===================== CARDINALITY LABELS ===================== -->
+      <!-- A -->
+      <rect x="284" y="164" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="292" y="173" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <rect x="540" y="324" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="548" y="333" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+
+      <!-- B + relationship label -->
+      <rect x="672" y="184" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="680" y="193" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <rect x="672" y="304" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="680" y="313" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <rect x="652" y="240" width="56" height="16" rx="2" fill="#f5f5f5"/>
+      <text x="680" y="252" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">1:1 STATE</text>
+
+      <!-- C -->
+      <rect x="1020" y="184" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="1028" y="193" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <rect x="804" y="324" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="812" y="333" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+
+      <!-- D -->
+      <rect x="288" y="384" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="296" y="393" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <rect x="536" y="384" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="544" y="393" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+
+      <!-- E -->
+      <rect x="808" y="384" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="816" y="393" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+      <rect x="1016" y="384" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="1024" y="393" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+
+      <!-- F -->
+      <rect x="288" y="568" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="296" y="577" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <rect x="576" y="452" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="584" y="461" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+
+      <!-- G -->
+      <rect x="1016" y="568" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="1024" y="577" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">N</text>
+      <rect x="768" y="452" width="16" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="776" y="461" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">1</text>
+
+      <!-- ===================== ENTITIES ===================== -->
+
+      <!-- Users -->
+      <rect x="40" y="40" width="240" height="136" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="40" y="40" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="40" y="72" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="40" y1="80" x2="280" y2="80" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="56" y="56" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="56" y="72" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Users</text>
+      <text x="56" y="100" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="264" y="100" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="56" y="120" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">email</text>
+      <text x="264" y="120" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text · unique</text>
+      <text x="56" y="140" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">auth_provider</text>
+      <text x="264" y="140" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="56" y="160" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">preferences</text>
+      <text x="264" y="160" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+
+      <!-- Canvas State -->
+      <rect x="560" y="40" width="240" height="136" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="560" y="40" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="560" y="72" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="560" y1="80" x2="800" y2="80" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="576" y="56" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="576" y="72" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Canvas State</text>
+      <text x="576" y="100" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="784" y="100" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="576" y="120" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="784" y="120" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid · unique</text>
+      <text x="576" y="140" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">elements</text>
+      <text x="784" y="140" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+      <text x="576" y="160" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">version</text>
+      <text x="784" y="160" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">int</text>
+
+      <!-- Design Tokens -->
+      <rect x="1040" y="40" width="240" height="156" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="1040" y="40" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="1040" y="72" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="1040" y1="80" x2="1280" y2="80" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="1056" y="56" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="1056" y="72" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Design Tokens</text>
+      <text x="1056" y="100" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="1264" y="100" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="120" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="1264" y="120" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="140" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">colors</text>
+      <text x="1264" y="140" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+      <text x="1056" y="160" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">spacing</text>
+      <text x="1264" y="160" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+      <text x="1056" y="180" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">typography</text>
+      <text x="1264" y="180" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+
+      <!-- Projects (FOCAL / AGGREGATE ROOT) -->
+      <rect x="560" y="320" width="240" height="136" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <rect x="560" y="320" width="240" height="40" rx="6" fill="rgba(235,108,54,0.16)"/>
+      <rect x="560" y="352" width="240" height="8" fill="rgba(235,108,54,0.16)"/>
+      <line x1="560" y1="360" x2="800" y2="360" stroke="rgba(235,108,54,0.40)" stroke-width="1"/>
+      <text x="576" y="336" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY · AGGREGATE ROOT</text>
+      <text x="576" y="352" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Projects</text>
+      <text x="576" y="380" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="784" y="380" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="576" y="400" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="784" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="576" y="420" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ owner_id</text>
+      <text x="784" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="576" y="440" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">created_at</text>
+      <text x="784" y="440" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">timestamp</text>
+
+      <!-- Breakpoints -->
+      <rect x="40" y="320" width="240" height="136" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="40" y="320" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="40" y="352" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="40" y1="360" x2="280" y2="360" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="56" y="336" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="56" y="352" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Breakpoints</text>
+      <text x="56" y="380" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="264" y="380" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="56" y="400" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="264" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="56" y="420" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">name</text>
+      <text x="264" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="56" y="440" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">min_width</text>
+      <text x="264" y="440" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">int</text>
+
+      <!-- Versions -->
+      <rect x="1040" y="320" width="240" height="136" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="1040" y="320" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="1040" y="352" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="1040" y1="360" x2="1280" y2="360" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="1056" y="336" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="1056" y="352" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Versions</text>
+      <text x="1056" y="380" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="1264" y="380" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="400" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="1264" y="400" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="420" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">snapshot</text>
+      <text x="1264" y="420" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+      <text x="1056" y="440" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">created_at</text>
+      <text x="1264" y="440" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">timestamp</text>
+
+      <!-- Annotations -->
+      <rect x="40" y="560" width="240" height="156" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="40" y="560" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="40" y="592" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="40" y1="600" x2="280" y2="600" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="56" y="576" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="56" y="592" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Annotations</text>
+      <text x="56" y="620" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="264" y="620" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="56" y="640" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="264" y="640" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="56" y="660" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">text</text>
+      <text x="264" y="660" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="56" y="680" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">position</text>
+      <text x="264" y="680" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">jsonb</text>
+      <text x="56" y="700" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">resolved</text>
+      <text x="264" y="700" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">boolean</text>
+
+      <!-- Generated Code -->
+      <rect x="1040" y="560" width="240" height="156" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="1040" y="560" width="240" height="40" rx="6" fill="rgba(45,49,66,0.04)"/>
+      <rect x="1040" y="592" width="240" height="8" fill="rgba(45,49,66,0.04)"/>
+      <line x1="1040" y1="600" x2="1280" y2="600" stroke="rgba(45,49,66,0.22)" stroke-width="1"/>
+      <text x="1056" y="576" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">ENTITY</text>
+      <text x="1056" y="592" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif">Generated Code</text>
+      <text x="1056" y="620" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace"># id</text>
+      <text x="1264" y="620" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="640" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">→ project_id</text>
+      <text x="1264" y="640" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">uuid</text>
+      <text x="1056" y="660" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">html</text>
+      <text x="1264" y="660" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="1056" y="680" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">css</text>
+      <text x="1264" y="680" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">text</text>
+      <text x="1056" y="700" fill="#2d3142" font-size="9" font-family="'Geist Mono', monospace">validation_status</text>
+      <text x="1264" y="700" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="end">enum</text>
+
+      <!-- ===================== LEGEND (horizontal bottom strip) ===================== -->
+      <line x1="40" y1="736" x2="1280" y2="736" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="40" y="752" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.18em">LEGEND</text>
+
+      <rect x="40" y="768" width="16" height="12" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="64" y="778" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Entity</text>
+
+      <rect x="220" y="768" width="16" height="12" rx="2" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <text x="244" y="778" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Aggregate root</text>
+
+      <text x="420" y="778" fill="#2d3142" font-size="10" font-weight="600" font-family="'Geist Mono', monospace">#</text>
+      <text x="436" y="778" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Primary key</text>
+
+      <text x="600" y="778" fill="#2d3142" font-size="10" font-weight="600" font-family="'Geist Mono', monospace">→</text>
+      <text x="616" y="778" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Foreign key</text>
+
+      <text x="780" y="778" fill="#4f5d75" font-size="10" font-weight="600" font-family="'Geist Mono', monospace">1 / N</text>
+      <text x="816" y="778" fill="#4f5d75" font-size="9" font-family="'Geist', sans-serif">Cardinality</text>
+    </svg>
+
+    <div class="summary">
+      <div class="card">
+        <p class="eyebrow">Caching Strategy</p>
+        <div class="card-header">
+          <span class="card-dot"></span>
+          <h3>Session cache, flushed to durable storage</h3>
+        </div>
+        <div class="cache-row">
+          <div class="cache-item">
+            <span class="cache-dot link"></span>
+            <p><strong>Redis</strong>active sessions · canvas edits · expires after 30 min idle</p>
+          </div>
+          <div class="cache-item">
+            <span class="cache-dot ink"></span>
+            <p><strong>PostgreSQL</strong>system of record · all 8 tables above · durable</p>
+          </div>
+        </div>
+        <p class="cache-note">A periodic flush job writes dirty cache state back to Postgres — the cache is a speed layer, never the source of truth.</p>
+      </div>
+    </div>
+
+    <footer>07 / 12 — Data Model &amp; Database Schema · Design Tool Architecture</footer>
+  </div>
+</body>
+</html>
