@@ -2,6 +2,8 @@
 
 **Status: concept stage — architecture and market research, no code yet.**
 
+> **On hold until PIIIX has funding to build it.** In the meantime, these tools cover similar ground: [ArtCraft](https://getartcraft.com/) and [Storytold](https://github.com/storytold).
+
 Vectory is a proposed web-based design tool that pairs a Figma/Illustrator-style
 drag-and-drop canvas with real-time AI code generation. A designer builds a page
 visually; an LLM (Claude) turns the canvas state into semantic, production-ready
