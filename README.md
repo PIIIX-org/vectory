@@ -1,76 +1,44 @@
+<div align="center">
+
+<img src="./assets/hero.svg" width="100%" alt="A blueprint of the Vectory interface: rulers along the top and left, a selected hero frame with a headline, a paragraph and a button on the canvas, and a code panel on the right where the HTML those shapes would emit types itself in. A red seal in the corner reads ON HOLD."/>
+
+<img src="./assets/status.svg" width="100%" alt="Vectory status: concept, on hold until funded; 12 architecture diagrams; no application code; MIT."/>
+
+</div>
+
 # Vectory
 
-**Status: concept stage — architecture and market research, no code yet.**
+A design canvas that writes real HTML and CSS as you draw. A designer places shapes, text and
+images on a Figma-style canvas; an LLM turns the canvas state into semantic, exportable markup
+as they work, with a live preview and a code panel that stays open, so the output is never a
+black box. First-version scope: static marketing sites, with design tokens, responsive
+breakpoints and one-click deploy.
 
-> **On hold until PIIIX has funding to build it.** In the meantime, these tools cover similar ground: [ArtCraft](https://getartcraft.com/) and [Storytold](https://github.com/storytold).
+**On hold until PIIIX has the funding to build it.** No application code exists. What exists is
+the research and the architecture: twelve diagrams and a competitive pass, kept here so the
+thinking survives the pause. Until then, [ArtCraft](https://getartcraft.com/) and
+[Storytold](https://github.com/storytold) cover similar ground.
 
-Vectory is a proposed web-based design tool that pairs a Figma/Illustrator-style
-drag-and-drop canvas with real-time AI code generation. A designer builds a page
-visually; an LLM (Claude) turns the canvas state into semantic, production-ready
-HTML5 + CSS as they work, with a live preview pane and an optional code editor
-panel so the generated output is never a black box.
+## The architecture, as drawn
 
-The goal is to sit in the gap between two extremes: no-code builders that hide
-the code entirely (fast, but you're locked in and the output is often bloated),
-and hand-coding (fully transparent, but slow to ship a marketing site). Vectory
-keeps the designer in a familiar canvas UX while making the code a first-class,
-inspectable, exportable artifact.
+<div align="center">
+<img src="./assets/01.png" width="300" alt="Vectory architecture diagram 1: system overview"/> <img src="./assets/05.png" width="300" alt="Vectory architecture diagram 5: the code-generation pipeline"/> <img src="./assets/12.png" width="300" alt="Vectory architecture diagram 12: interconnection map"/>
+</div>
 
-**Target user:** designers who want to ship a real website without becoming
-developers. **Secondary:** developers who want a faster prototyping loop.
-**Scope for a first version:** static marketing sites — canvas with shapes,
-text, images, groups and layers; design tokens; responsive breakpoints;
-real-time preview; one-click deploy to Vercel/Netlify.
+All twelve: [`assets/01.png`](./assets/01.png) through [`assets/12.png`](./assets/12.png). The
+client/server split, the codegen pipeline, the data model, real-time sync, deploy.
 
-This repo is a living research and architecture space, not a shipped product.
-It exists to think through the system before writing a line of application
-code, and to track how the competitive landscape moves while that thinking
-happens.
+## Why it was worth drawing
 
-## What's here
+The AI design-tool market is crowded at a glance: canvas-plus-codegen for React apps exists,
+and the no-code builders are well funded. Static marketing-site HTML and CSS, built from a
+canvas as the entry point and exported as plain files you own, was still open. The diagrams
+are the answer to "what would it take", written down before anyone wrote a line of product
+code.
 
-- **[`diagrams/`](diagrams)** — 12 self-contained architecture diagrams (HTML
-  + inline SVG, open directly in a browser) covering the full system: layer
-  overview, client/server split, agent orchestration, data flow, the code-gen
-  pipeline, designer UX, data model, third-party integrations, real-time sync,
-  validation/publishing, AI performance budgets, and a master map of how all
-  eleven connect.
-- **[`RESEARCH.md`](RESEARCH.md)** — competitive landscape research: who else
-  is building in this space (AI-native prompt-to-app tools, design-to-code
-  converters, AI UI generators, established no-code builders), how they
-  actually generate code, and where the gap is for a new entrant.
+## License
 
-## Diagram gallery
+[MIT](./LICENSE) · a [PIIIX](https://github.com/PIIIX-org) concept.
 
-| # | Diagram | |
-|---|---|---|
-| 01 | Master System Overview | [<img src="assets/01.png" width="220">](diagrams/01-master-system-overview.html) |
-| 02 | Backend / Frontend Architecture | [<img src="assets/02.png" width="220">](diagrams/02-backend-frontend-architecture.html) |
-| 03 | Agentic Flow & Coordination | [<img src="assets/03.png" width="220">](diagrams/03-agentic-flow-coordination.html) |
-| 04 | Data Flow & Transformation | [<img src="assets/04.png" width="220">](diagrams/04-data-flow-transformation.html) |
-| 05 | Code Generation Pipeline | [<img src="assets/05.png" width="220">](diagrams/05-code-generation-pipeline.html) |
-| 06 | Designer User Flow & Interactions | [<img src="assets/06.png" width="220">](diagrams/06-user-flow-interactions.html) |
-| 07 | Data Model & Database Schema | [<img src="assets/07.png" width="220">](diagrams/07-data-model-schema.html) |
-| 08 | Libraries, APIs & MCPs Integration | [<img src="assets/08.png" width="220">](diagrams/08-libraries-apis-mcps.html) |
-| 09 | State Management & Real-time Sync | [<img src="assets/09.png" width="220">](diagrams/09-state-management-sync.html) |
-| 10 | Validation, Error Handling & Publishing | [<img src="assets/10.png" width="220">](diagrams/10-validation-error-handling-publishing.html) |
-| 11 | AI/LLM Integration & Performance/Scaling | [<img src="assets/11.png" width="220">](diagrams/11-ai-llm-integration-performance-scaling.html) |
-| 12 | Master Interconnection Diagram | [<img src="assets/12.png" width="220">](diagrams/12-master-interconnection.html) |
-
-Click any thumbnail to open the interactive HTML/SVG version.
-
-## Why "static marketing sites" first
-
-Full app builders (auth, databases, business logic) are a much harder AI
-code-generation problem — state management and backend logic don't degrade
-gracefully when an LLM gets something subtly wrong. Static marketing pages do:
-worst case, a section looks off and gets tweaked. That makes it a sane wedge
-to prove out canvas-to-code quality before ever touching app logic.
-
-## Status & next steps
-
-No implementation exists yet. Open questions being tracked in `RESEARCH.md`
-and worth resolving before writing code: whether the canvas-first UX is
-actually the differentiator (versus code quality or price), and whether
-several incumbents listed there are already closing this gap faster than a
-new entrant could catch up.
+<!-- forged-with: git-a-profile -->
+<sub>Forged with <a href="https://github.com/PIIIX-org/git-a-profile">git-a-profile</a> · <a href="https://github.com/PIIIX-org">PIIIX</a></sub>
